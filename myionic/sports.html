@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html ng-app="ionicApp">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+		<title></title>
+		<link rel="stylesheet" href="css/ionic.css" />
+	</head>
+
+	<body ng-controller="indexCtrl">
+		<ion-side-menus>
+			<!-- 中间内容 -->
+			<ion-side-menu-content>
+				<!--页头-->
+				<ion-header-bar class="bar-royal">
+					<button ng-click="toggleLeft()" class="button icon ion-gear-a"></button>
+					<h1 class="title" ng-bind="title"></h1>
+				</ion-header-bar>
+
+				<ion-content scroll="true" padding="false">
+					<!--下拉刷新-->
+					<ion-refresher on-refresh="loadMore()" pulling-icon="ion-chevron-down" refreshing-text="加载中...">
+					</ion-refresher>
+
+					<div class="list">
+						<a ng-repeat="n in news" ng-href="{{n.url}}" class="item item-thumbnail-left">
+							<img ng-src="{{n.picUrl}}">
+							<h2 ng-bind="n.title"></h2>
+							<p ng-bind="n.description"></p>
+						</a>
+					</div>
+					<!--上拉刷新-->
+					<!--<ion-infinite-scroll></ion-infinite-scroll>-->
+				</ion-content>
+
+				<!--页脚-->
+				<ion-footer-bar class="bar-royal"></ion-footer-bar>
+			</ion-side-menu-content>
+
+
+
+
+
+
+			<!-- 左侧菜单 -->
+			<ion-side-menu side="left">
+				<!--头部文字(别设置！！会挡住下面的组件)-->
+				<!--<div class="bar bar-header">
+					<div class="h1 title">设置</div>
+				</div>-->
+				<!--列表-->
+				
+				<div class="list">
+					<div class="item item-divider">设置</div>
+					<div class="item range">
+						<i class="icon ion-volume-low"></i>
+						<input type="range" name="volume">
+						<i class="icon ion-volume-high"></i>
+					</div>
+					<div class="item range range-positive">
+						<i class="icon ion-ios-sunny-outline"></i>
+						<input type="range" name="volume" min="0" max="100" value="33">
+						<i class="icon ion-ios-sunny"></i>
+					</div>
+					<button class="button button-full button-assertive button-small">退出登录</button>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				<!--<div class="item range">
+					<i class="icon ion-volume-low"></i>
+					<input type="range" name="volume">
+					<i class="icon ion-volume-high"></i>
+				</div>
+				<div class="list">
+					<div class="item range range-positive">
+						<i class="icon ion-ios-sunny-outline"></i>
+    					<input type="range" name="volume" min="0" max="100" value="33">
+    					<i class="icon ion-ios-sunny"></i>
+					</div>
+				</div>-->
+				
+			</ion-side-menu>
+
+			<!-- 右侧菜单 -->
+			<!--<ion-side-menu side="right">
+			</ion-side-menu>-->
+		</ion-side-menus>
+
+	</body>
+
+	<script src="js/ionic.bundle.js"></script>
+	<script>
+		var app = angular.module("ionicApp", ["ionic"]);
+		app.controller("indexCtrl", function($scope, $http, $ionicSideMenuDelegate) {
+			$scope.title = "体育新闻";
+			$scope.page = 1;
+			$scope.news = [];
+			$scope.loadMore = function() {
+				$http({
+					url: "http://localhost/angular_test/myShowAPI/sports.php",
+					method: "GET",
+					params: {
+						page: $scope.page++
+					}
+				}).then(function(data) {
+					console.log(data);
+					// 从头部添加数据
+					$scope.news = data.data.showapi_res_body.newslist.concat($scope.news);
+					// 从底部添加数据
+					//$scope.news = $scope.news.concat(data.data.showapi-res_body.newslist);
+					// 下拉刷新完成后广播
+					$scope.$broadcast("scroll.refreshComplete");
+					// 上拉刷新完成后广播
+					//$scope.$broadcast("scroll.infiniteScrollComplete");
+				})
+			}
+			$scope.loadMore();
+
+			// 左侧菜单
+			$scope.toggleLeft = function() {
+				$ionicSideMenuDelegate.toggleLeft();
+			};
+
+		})
+	</script>
+
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app="meinv">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<title></title>
+	</head>
+	<body ng-controller="indexCtrl">
+		<div ng-repeat="n in news">
+			<p>{{n.title}}</p>
+			<p>{{n.ctime}}</p>
+			<p>{{n.description}}</p>
+			<img ng-src="{{n.picUrl}}" />
+		</div>
+	</body>
+	
+	<script src="js/angular.js"></script>
+	<script>
+		var app = angular.module("meinv",[]);
+		app.controller("indexCtrl",function($scope,$http){
+			$scope.page = 1;
+			$scope.news = [];
+			$scope.loadMore = function(){
+				$http({
+					url:"http://localhost/angular_test/myShowAPI/api.php",
+					method:"GET",
+					params:{
+						page:$scope.page++
+					}
+				}).then(function(data){
+					console.log(data);
+					$scope.news = $scope.news.concat(data.data.showapi_res_body.newslist);
+				})
+			}
+			$scope.loadMore();
+		})
+	</script>
+</html>

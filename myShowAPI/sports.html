@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html ng-app="sports">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<title></title>
+		<link rel="stylesheet" href="css/weui.css" />
+	</head>
+	<body ng-controller="indexCtrl">
+		<!--<div ng-repeat="n in news">
+			<p>{{n.title}}</p>
+			<img ng-src="{{n.picUrl}}"/>
+			<p>{{n.description}}</p>
+			<p>{{n.ctime}}</p>
+			<a ng-href="{{n.url}}">{{n.url}}</a>
+		</div>-->
+		
+		<div class="page__bd">
+			<article class="weui-article" ng-repeat="n in news">
+				<h1>{{n.title}}</h1>
+				<section>
+					<!--<h2 class="title">章标题</h2>-->
+					<section>
+						<!--<h3>1.1 节标题</h3>-->
+						<p>
+							{{n.description}}
+						</p>
+						<p>
+							<img ng-src="{{n.picUrl}}" alt="">
+							<!--<img src="./images/pic_article.png" alt="">-->
+						</p>
+						<a ng-href="{{n.url}}">{{n.url}}</a>
+					</section>
+				</section>
+			</article>
+		</div>
+		
+		<button ng-click="loadMore">查看更多</button>
+	</body>
+	
+	<script src="js/angular.js"></script>
+	<script>
+		var app = angular.module("sports",[]);
+		app.controller("indexCtrl",function($scope,$http){
+			$scope.page = 1;
+			$scope.news = [];
+			$scope.loadMore = function(){
+				$http({
+					url:"http://localhost/angular_test/myShowAPI/sports.php",
+					method:"GET",
+					params:{
+						page:$scope.page++
+					}
+				}).then(function(data){
+					console.log(data);
+					$scope.news = $scope.news.concat(data.data.showapi_res_body.newslist);
+				})
+			}
+			$scope.loadMore();
+		})
+	</script>
+</html>
